@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Fees Management System</title>
+    <link rel="stylesheet" href="styles.css">
+  <!--  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>-->
+</head>
+<style type="text/css">
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    height: 100vh;
+    background-color: #F4F6FA;
+}
+
+.sidebar {
+    background-color: #023b13;
+    width: 250px;
+    height: 100vh;
+    padding: 20px;
+    color: white;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar .profile {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.sidebar .profile img {
+    border-radius: 50%;
+    width: 100px;
+    margin-bottom: 10px;
+}
+
+.sidebar nav a {
+    display: block;
+    padding: 15px;
+    color: rgb(255, 255, 255);
+    text-decoration: none;
+    margin-bottom: 10px;
+    background-color: #09b917;
+    border-radius: 10px;
+    font-weight: 900;
+    text-align: center;
+}
+
+.sidebar nav a:hover {
+    background-color: #130dcf;
+}
+
+.main-content {
+    margin-left: 250px;
+    flex: 1;
+    padding: 20px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    font-size: 24px;
+    color: #333;
+}
+
+header input {
+    padding: 10px;
+    width: 250px;
+    border: none;
+    border-radius: 20px;
+    background-color: #F0F2F5;
+}
+
+.stats {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.stat-item {
+    background-color: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 30%;
+}
+
+.stat-item h3 {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.stat-item p {
+    font-size: 22px;
+    color: #333;
+}
+
+.actions {
+    margin-top: 20px;
+    text-align: right;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #08e613;
+    color: rgb(250, 250, 250);
+    border: none;
+    font-weight: 800;
+    text-transform: uppercase;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #133a09;
+}
+
+.students-list {
+    margin-top: 20px;
+}
+
+.students-list table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.students-list th,
+.students-list td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.students-list th {
+    background-color: #054d23;
+    color: white;
+    font-weight:bold;
+}
+
+.students-list td {
+    color: #000000;
+}
+
+.students-list tr:hover {
+    background-color: #f9f9f9;
+}
+
+.paid {
+    color: green;
+    font-weight: bold;
+}
+
+.not-paid {
+    color: red;
+    font-weight: bold;
+}
+
+
+.report-section {
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+.report-section header h1 {
+    margin-bottom: 20px;
+}
+
+.filters select, 
+.filters input, 
+.filters button {
+    padding: 10px;
+    margin-right: 10px;
+    margin-bottom: 20px;
+}
+
+.report-table {
+    margin-top: 20px;
+}
+
+.report-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.report-table th, .report-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.report-table th {
+    background-color: #f2f2f2;
+}
+
+#reportTotals {
+    margin-top: 20px;
+    font-size: 18px;
+    text-align: right;
+}
+
+.report-actions {
+    margin-top: 20px;
+    text-align: right;
+}
+
+.report-actions button {
+    padding: 10px 20px;
+    background-color: #4A47A3;
+    color: white;
+    border: none;
+    border-radius: 8px;
+}
+
+.report-actions button:hover {
+    background-color: #3B3982;
+}
+
+
+#classFilter,
+#typeFilter,
+#dateFilter {
+    padding: 10px;
+    margin: 0 5px;
+    border: none;
+    color: #ffffff;
+    font-weight: bold;
+    border-radius: 20px;
+    background-color: #046909;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 40px;
+    border-radius: 15px;
+    width: 400px;
+    text-align: center;
+    position: relative;
+}
+
+.modal-content h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.modal-content form {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-content form input,
+.modal-content form select {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.modal-content button {
+    background-color: #4A47A3;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.modal-content button:hover {
+    background-color: #3B3982;
+}
+.paid {
+    background-color: #d4edda;  /* Green background for full payment */
+    color: #155724;  /* Dark green text */
+}
+
+.not-paid {
+    background-color: #f8d7da;  /* Red background for not paid */
+    color: #721c24;  /* Dark red text */
+}
+        /* Styling for the report table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        #print-area {
+            display: none; /* Hidden by default */
+        }
+
+        @media print {
+            body * {
+                display: block; /* Hide all elements */
+            }
+            #print-area {
+                display: block; /* Only show the print area */
+                width: 100%;
+                text-align: center;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+            }
+            table, th, td {
+                border: 1px solid black;
+            }
+        }
+    </style>
+</style>
+
+<body>
+    <div class="sidebar">
+        <div class="profile">
+            <img src="1ww.png" alt="Profile">
+            <h3>Admin</h3>
+        </div>
+        <nav>
+            <a href="#">Dashboard</a>
+            <a href="#">Payments</a>
+            <a href="#">Reports</a>
+        </nav>
+    </div>
+    <div class="main-content">
+        <header>
+            <h1>Dashboard</h1>
+            <input type="text" placeholder="Search by Name or Payment ID..." id="searchBar">
+        </header>
+        <section class="stats">
+            <div class="stat-item">
+                <h3>Total Fees</h3>
+                <p id="totalFees">₦0.00</p>
+            </div>
+            <div class="stat-item">
+                <h3>Total Students Paid</h3>
+                <p id="studentsPaid">0</p>
+            </div>
+            <div class="stat-item">
+                <h3>Total Pending</h3>
+                <p id="totalPending">0</p>
+            </div>
+        </section>
+       <br>
+      <select id="classFilter">
+      <option value="">All Classes</option>
+      <option value="Primary 1">Primary 1</option>
+      <option value="Primary 2">Primary 2</option>
+      <!-- Add more class options as needed -->
+      </select>
+      
+      <select id="typeFilter">
+      <option value="">All Types</option>
+      <option value="Full">Full Payment</option>
+      <option value="Partial">Not Full Payment</option>
+      </select>
+      
+      <input type="date" id="dateFilter">
+     
+     
+        <section class="actions">
+            <button id="addPaymentBtn">Add Student Payment</button>
+        </section>
+        <section class="students-list">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Class</th>
+                        <th>Payment Type</th>
+                        <th>Amount</th>
+                        <th>Payment Date</th>
+                        <th>Payment ID</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="studentsTableBody">
+                    <!-- Dynamic Content here -->
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <!-- Payment Dialog -->
+    <div class="modal" id="paymentModal">
+        <div class="modal-content">
+            <h2>Add Payment</h2>
+            <form id="paymentForm">
+                <label for="studentName">Student Name:</label>
+                <input type="text" id="studentName" required>
+
+                <label for="studentClass">Class:</label>
+                <select id="studentClass" required>
+                    <option value="Primary 1">Primary 1</option>
+                    <option value="Primary 2">Primary 2</option>
+                    <option value="Primary 3">Primary 3</option>
+                    <option value="Primary 4">Primary 4</option>
+                    <option value="Primary 5">Primary 5</option>
+                </select>
+
+                <label for="paymentType">Payment Type:</label>
+                <select id="paymentType" required>
+                    <option value="Full">Full Payment</option>
+                    <option value="Partial">Not Full Payment</option>
+                </select>
+
+                <label for="paymentAmount">Amount:</label>
+                <input type="number" id="paymentAmount" disabled>
+
+                <label for="paymentDate">Date:</label>
+                <input type="date" id="paymentDate" required>
+
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </div>
+<body>
+
+<div class="report-section">
+    <header>
+        <h1>Generate Reports</h1>
+    </header>
+    <section class="filters">
+        <select id="reportClassFilter">
+            <option value="">All Classes</option>
+            <option value="Primary 1">Primary 1</option>
+            <option value="Primary 2">Primary 2</option>
+            <option value="Primary 3">Primary 3</option>
+            <option value="Primary 4">Primary 4</option>
+            <option value="Primary 5">Primary 5</option>
+        </select>
+
+        <select id="reportTypeFilter">
+            <option value="">All Payment Types</option>
+            <option value="Full">Full Payment</option>
+            <option value="Partial">Not Full Payment</option>
+        </select>
+
+        <input type="date" id="reportDateFilter">
+
+        <button id="generateReportBtn">Generate Report</button>
+    </section>
+
+    <section class="report-table">
+        <table id="reportTable">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Class</th>
+                    <th>Payment Type</th>
+                    <th>Amount</th>
+                    <th>Payment Date</th>
+                    <th>Payment ID</th>
+                </tr>
+            </thead>
+            <tbody id="reportTableBody">
+                <!-- Generated Report Content Here -->
+            </tbody>
+        </table>
+
+        <div id="reportTotals">
+            <p>Total Students: <span id="totalReportStudents">0</span></p>
+            <p>Grand Total Amount: ₦<span id="grandTotalReport">0</span></p>
+        </div>
+    </section>
+
+    <section class="report-actions">
+        <button onclick="generatePDF()" id="printReportBtn">Print Report</button>
+    </section>
+    <button id="printReportBt" style="display:none;" type="submit"></button>
+</div>
+
+<!-- Print Area -->
+<div id="printArea" style="display: none;">
+    <table id="printTable">
+        <thead>
+            <tr>
+                <th>Student Name</th>
+                <th>Class</th>
+                <th>Payment Type</th>
+                <th>Amount</th>
+                <th>Payment Date</th>
+                <th>Payment ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Populated by JavaScript -->
+        </tbody>
+    </table>
+    <p>Total Students: <span id="totalPrintStudents"></span></p>
+    <p>Grand Total: <span id="grandTotalPrint"></span></p>
+</div>
+</body>
+<script src="./jspdf.js"></script>
+<script src="./autotable.js"></script>
+<script type="text/javascript">
+const students = [];
+
+document.getElementById('addPaymentBtn').addEventListener('click', () => {
+    // Open the modal and reset form for new entry
+    document.getElementById('paymentModal').style.display = 'flex';
+    resetForm();
+    document.getElementById('paymentForm').onsubmit = addNewStudent;  // Ensure adding new student
+});
+
+function addNewStudent(event) {
+    event.preventDefault();
+
+    const student = {
+        studentName: document.getElementById('studentName').value,
+        studentClass: document.getElementById('studentClass').value,
+        paymentType: document.getElementById('paymentType').value,
+        paymentAmount: document.getElementById('paymentType').value === 'Full' ? getFullPayment(document.getElementById('studentClass').value) : document.getElementById('paymentAmount').value,
+        paymentDate: document.getElementById('paymentDate').value,
+        paymentId: generatePaymentID(),
+    };
+
+    students.push(student);
+    updateStudentList();
+    document.getElementById('paymentModal').style.display = 'none';
+    resetForm();
+}
+
+function getFullPayment(studentClass) {
+    switch (studentClass) {
+        case 'Primary 1':
+            return 20000;
+        case 'Primary 2':
+            return 23000;
+        case 'Primary 3':
+            return 25000;
+        case 'Primary 4':
+            return 27000;
+        case 'Primary 5':
+            return 30000;
+        default:
+            return 0;
+    }
+}
+
+function generatePaymentID() {
+    return Math.random().toString(10).substr(2, 9);
+}
+
+function resetForm() {
+    document.getElementById('paymentForm').reset();
+    document.getElementById('paymentAmount').disabled = true;
+}
+
+function updateStudentList() {
+    const tableBody = document.getElementById('studentsTableBody');
+    tableBody.innerHTML = '';
+
+    students.forEach(student => {
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+            <td>${student.studentName}</td>
+            <td>${student.studentClass}</td>
+            <td class="${student.paymentType === 'Full' ? 'paid' : 'not-paid'}">${student.paymentType}</td>
+            <td>₦${student.paymentAmount}</td>
+            <td>${student.paymentDate}</td>
+            <td>${student.paymentId}</td>
+            <td>
+                <button onclick="editStudent('${student.paymentId}')">Edit</button>
+            </td>
+        `;
+
+        tableBody.appendChild(row);
+    });
+
+    calculateStats();
+}
+
+
+
+function calculateStats() {
+    const totalFees = students.reduce((acc, student) => acc + parseInt(student.paymentAmount), 0);
+    const studentsPaid = students.length;
+    const totalPending = students.filter(student => student.paymentType !== 'Full').length;
+
+    document.getElementById('totalFees').textContent = `₦${totalFees.toLocaleString()}`;
+    document.getElementById('studentsPaid').textContent = studentsPaid;
+    document.getElementById('totalPending').textContent = totalPending;
+}
+
+// Edit Functionality
+function editStudent(paymentId) {
+    const student = students.find(student => student.paymentId === paymentId);
+    if (student) {
+        // Populate modal with existing student details
+        document.getElementById('studentName').value = student.studentName;
+        document.getElementById('studentClass').value = student.studentClass;
+        document.getElementById('paymentType').value = student.paymentType;
+        document.getElementById('paymentAmount').value = student.paymentAmount;
+        document.getElementById('paymentDate').value = student.paymentDate;
+
+        // Handle payment amount disabling
+        if (student.paymentType === 'Full') {
+            document.getElementById('paymentAmount').disabled = true;
+        } else {
+            document.getElementById('paymentAmount').disabled = false;
+        }
+
+        // Open modal
+        document.getElementById('paymentModal').style.display = 'flex';
+
+        // Modify form submission to update the existing student
+        document.getElementById('paymentForm').onsubmit = function(event) {
+            event.preventDefault();
+            updateStudent(student);
+        };
+    }
+}
+
+function updateStudent(student) {
+    student.studentName = document.getElementById('studentName').value;
+    student.studentClass = document.getElementById('studentClass').value;
+    student.paymentType = document.getElementById('paymentType').value;
+    student.paymentAmount = student.paymentType === 'Full' 
+        ? getFullPayment(student.studentClass) 
+        : document.getElementById('paymentAmount').value;
+    student.paymentDate = document.getElementById('paymentDate').value;
+
+    // Refresh the table with updated data
+    updateStudentList();
+    document.getElementById('paymentModal').style.display = 'none';
+    resetForm();
+}
+
+// Close Modal when clicking outside
+document.addEventListener('click', function(event) {
+    if (event.target === document.getElementById('paymentModal')) {
+        document.getElementById('paymentModal').style.display = 'none';
+        resetForm();
+    }
+});
+
+// Handle Full/Partial Payment Selection
+document.getElementById('paymentType').addEventListener('change', function() {
+    if (this.value === 'Full') {
+        document.getElementById('paymentAmount').disabled = true;
+    } else {
+        document.getElementById('paymentAmount').disabled = false;
+    }
+});
+
+// Search Functionality
+document.getElementById('searchBar').addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    const filteredStudents = students.filter(student => 
+        student.studentName.toLowerCase().includes(searchTerm) || 
+        student.paymentId.includes(searchTerm)
+    );
+    displayFilteredStudents(filteredStudents);
+});
+
+// Filter by Class, Type, and Date
+function filterPayments(classFilter, typeFilter, dateFilter) {
+    let filteredStudents = students;
+
+    if (classFilter) {
+        filteredStudents = filteredStudents.filter(student => student.studentClass === classFilter);
+    }
+
+    if (typeFilter) {
+        filteredStudents = filteredStudents.filter(student => student.paymentType === typeFilter);
+    }
+
+    if (dateFilter) {
+        filteredStudents = filteredStudents.filter(student => student.paymentDate === dateFilter);
+    }
+
+    displayFilteredStudents(filteredStudents);
+}
+
+function displayFilteredStudents(filteredStudents) {
+    const tableBody = document.getElementById('studentsTableBody');
+    tableBody.innerHTML = '';
+
+    filteredStudents.forEach(student => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${student.studentName}</td>
+            <td>${student.studentClass}</td>
+            <td class="${student.paymentType === 'Full' ? 'paid' : 'not-paid'}">${student.paymentType}</td>
+            <td>₦${student.paymentAmount}</td>
+            <td>${student.paymentDate}</td>
+            <td>${student.paymentId}</td>
+            <td><button onclick="editStudent('${student.paymentId}')">Edit</button></td>
+        `;
+
+        tableBody.appendChild(row);
+    });
+}
+
+document.getElementById('classFilter').addEventListener('change', function() {
+    filterPayments(this.value, document.getElementById('typeFilter').value, document.getElementById('dateFilter').value);
+});
+
+document.getElementById('typeFilter').addEventListener('change', function() {
+    filterPayments(document.getElementById('classFilter').value, this.value, document.getElementById('dateFilter').value);
+});
+
+document.getElementById('dateFilter').addEventListener('change', function() {
+    filterPayments(document.getElementById('classFilter').value, document.getElementById('typeFilter').value, this.value);
+});
+
+
+function filterPayments(classFilter, typeFilter, dateFilter) {
+    let filteredStudents = students;
+
+    if (classFilter) {
+        filteredStudents = filteredStudents.filter(student => student.studentClass === classFilter);
+    }
+
+    if (typeFilter) {
+        filteredStudents = filteredStudents.filter(student => student.paymentType === typeFilter);
+    }
+
+    if (dateFilter) {
+        filteredStudents = filteredStudents.filter(student => student.paymentDate === dateFilter);
+    }
+
+    return filteredStudents;
+}
+
+function displayReport(filteredStudents) {
+    const reportTableBody = document.getElementById('reportTableBody');
+    const printTableBody = document.getElementById('printTable').querySelector('tbody');
+    reportTableBody.innerHTML = '';
+    printTableBody.innerHTML = '';
+
+    let totalStudents = 0;
+    let grandTotalAmount = 0;
+
+    
+    filteredStudents.forEach(student => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+    <td>${student.studentName}</td>
+    <td>${student.studentClass}</td>
+    <td>${student.paymentType}</td>
+    <td>₦${student.paymentAmount}</td>
+    <td>${student.paymentDate}</td>
+    <td>${student.paymentId}</td>
+    `;
+    reportTableBody.appendChild(row);
+    
+    totalStudents++;
+    grandTotalAmount += parseInt(student.paymentAmount);
+    });
+document.getElementById('totalReportStudents').textContent = totalStudents;
+    document.getElementById('grandTotalReport').textContent = grandTotalAmount.toLocaleString();
+    document.getElementById('totalPrintStudents').textContent = totalStudents;
+    document.getElementById('grandTotalPrint').textContent = grandTotalAmount.toLocaleString();
+}
+
+document.getElementById('generateReportBtn').addEventListener('click', function () {
+    const classFilter = document.getElementById('reportClassFilter').value;
+    const typeFilter = document.getElementById('reportTypeFilter').value;
+    const dateFilter = document.getElementById('reportDateFilter').value;
+
+    const filteredStudents = filterPayments(classFilter, typeFilter, dateFilter);
+    displayReport(filteredStudents);
+});
+
+document.getElementById('printReportBt').addEventListener('click', function () {
+    const filteredStudents = filterPayments(
+        document.getElementById('reportClassFilter').value,
+        document.getElementById('reportTypeFilter').value,
+        document.getElementById('reportDateFilter').value
+    );
+
+    populatePrintArea(filteredStudents);  // Populate print area with the report data
+
+    // Temporarily show the print area, then print, then hide it again
+    document.getElementById('printArea').style.display = 'block';  // Show the print area
+    window.print();  // Trigger the print dialog
+    document.getElementById('printArea').style.display = 'none';  // Hide the print area after printing
+});
+
+function populatePrintArea(filteredStudents) {
+    const printTableBody = document.querySelector('#printTable tbody');
+    printTableBody.innerHTML = '';  // Clear any previous content
+
+    // Populate the table with filtered student data
+    filteredStudents.forEach(student => {
+        const row = `<tr>
+            <td>${student.studentName}</td>
+            <td>${student.studentClass}</td>
+            <td>${student.paymentType}</td>
+            <td>₦${student.paymentAmount}</td>
+            <td>${student.paymentDate}</td>
+            <td>${student.paymentId}</td>
+        </tr>`;
+        printTableBody.innerHTML += row;
+    });
+
+    // Update totals in the print area
+    document.getElementById('totalPrintStudents').textContent = filteredStudents.length;
+    const grandTotal = filteredStudents.reduce((total, student) => total + parseInt(student.paymentAmount), 0);
+    document.getElementById('grandTotalPrint').textContent = `₦${grandTotal.toLocaleString()}`;
+}
+</script>
+<script src="pdfgen.js"></script>
+</html>
